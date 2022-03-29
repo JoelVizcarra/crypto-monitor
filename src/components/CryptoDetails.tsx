@@ -26,6 +26,8 @@ import Loader from './Loader';
 const { Text, Title } = Typography;
 const { Option } = Select;
 
+const time = ['3h', '24h', '7d', '30d', '1y', '3m', '3y', '5y'];
+
 type CryptoDetailsParamsType = {
 	coinUuid: string;
 };
@@ -38,59 +40,63 @@ const CryptoDetails = () => {
 		coinUuid,
 		timePeriod,
 	});
-	const cryptoDetails = data?.data?.coin;
-
-	const time = ['3h', '24h', '7d', '30d', '1y', '3m', '3y', '5y'];
 
 	const stats = useMemo(
 		() => [
 			{
 				title: 'Price to USD',
-				value: `$ ${cryptoDetails?.price && millify(cryptoDetails?.price)}`,
+				value: `$ ${
+					data?.data?.coin?.price && millify(data?.data?.coin?.price)
+				}`,
 				icon: <DollarCircleOutlined />,
 			},
-			{ title: 'Rank', value: cryptoDetails?.rank, icon: <NumberOutlined /> },
+			{
+				title: 'Rank',
+				value: data?.data?.coin?.rank,
+				icon: <NumberOutlined />,
+			},
 			{
 				title: '24h Volume',
 				value: `$ ${
-					cryptoDetails?.['24hVolume'] && millify(cryptoDetails?.['24hVolume'])
+					data?.data?.coin?.['24hVolume'] &&
+					millify(data?.data?.coin?.['24hVolume'])
 				}`,
 				icon: <ThunderboltOutlined />,
 			},
 			{
 				title: 'Market Cap',
 				value: `$ ${
-					cryptoDetails?.marketCap && millify(cryptoDetails?.marketCap)
+					data?.data?.coin?.marketCap && millify(data?.data?.coin?.marketCap)
 				}`,
 				icon: <DollarCircleOutlined />,
 			},
 			{
 				title: 'All-time-high(daily avg.)',
 				value: `$ ${
-					cryptoDetails?.allTimeHigh?.price &&
-					millify(cryptoDetails?.allTimeHigh?.price)
+					data?.data?.coin?.allTimeHigh?.price &&
+					millify(data?.data?.coin?.allTimeHigh?.price)
 				}`,
 				icon: <TrophyOutlined />,
 			},
 		],
-		[cryptoDetails]
+		[data?.data?.coin]
 	);
 
 	const genericStats = useMemo(
 		() => [
 			{
 				title: 'Number Of Markets',
-				value: cryptoDetails?.numberOfMarkets,
+				value: data?.data?.coin?.numberOfMarkets,
 				icon: <FundOutlined />,
 			},
 			{
 				title: 'Number Of Exchanges',
-				value: cryptoDetails?.numberOfExchanges,
+				value: data?.data?.coin?.numberOfExchanges,
 				icon: <MoneyCollectOutlined />,
 			},
 			{
 				title: 'Aprroved Supply',
-				value: cryptoDetails?.supply?.confirmed ? (
+				value: data?.data?.coin?.supply?.confirmed ? (
 					<CheckOutlined />
 				) : (
 					<StopOutlined />
@@ -100,20 +106,21 @@ const CryptoDetails = () => {
 			{
 				title: 'Total Supply',
 				value: `$ ${
-					cryptoDetails?.supply?.total && millify(cryptoDetails?.supply?.total)
+					data?.data?.coin?.supply?.total &&
+					millify(data?.data?.coin?.supply?.total)
 				}`,
 				icon: <ExclamationCircleOutlined />,
 			},
 			{
 				title: 'Circulating Supply',
 				value: `$ ${
-					cryptoDetails?.supply?.circulating &&
-					millify(cryptoDetails?.supply?.circulating)
+					data?.data?.coin?.supply?.circulating &&
+					millify(data?.data?.coin?.supply?.circulating)
 				}`,
 				icon: <ExclamationCircleOutlined />,
 			},
 		],
-		[cryptoDetails]
+		[data?.data?.coin]
 	);
 
 	if (isFetching) return <Loader />;
@@ -122,10 +129,10 @@ const CryptoDetails = () => {
 		<Col className="coin-detail-container">
 			<Col className="coin-heading-container">
 				<Title level={2} className="coin-name">
-					{cryptoDetails.name} ({cryptoDetails.symbol}) Price
+					{data?.data?.coin.name} ({data?.data?.coin.symbol}) Price
 				</Title>
 				<p>
-					{cryptoDetails.name} live price in US Dollar (USD). View value
+					{data?.data?.coin.name} live price in US Dollar (USD). View value
 					statistics, market cap and supply.
 				</p>
 			</Col>
@@ -139,21 +146,23 @@ const CryptoDetails = () => {
 					<Option key={date}>{date}</Option>
 				))}
 			</Select>
-			<LineChart
-				coinHistory={coinHistory?.data}
-				currentPrice={millify(cryptoDetails.price)}
-				coinName={cryptoDetails.name}
-			/>
+			{coinHistory && (
+				<LineChart
+					coinHistory={coinHistory?.data}
+					currentPrice={millify(data?.data?.coin.price)}
+					coinName={data?.data?.coin.name}
+				/>
+			)}
 			<Col className="stats-container">
 				<Col className="coin-value-statistics">
 					<Col className="coin-value-statistics-heading">
 						<Title level={3} className="coin-details-heading">
-							{cryptoDetails.name} Value Statistics
+							{data?.data?.coin.name} Value Statistics
 						</Title>
-						<p>An overview showing the stats of {cryptoDetails.name}</p>
+						<p>An overview showing the stats of {data?.data?.coin.name}</p>
 					</Col>
 					{stats.map(({ icon, title, value }) => (
-						<Col className="coin-stats">
+						<Col className="coin-stats" key={title}>
 							<Col className="coin-stats-name">
 								<Text>{icon}</Text>
 								<Text>{title}</Text>
@@ -165,12 +174,12 @@ const CryptoDetails = () => {
 				<Col className="other-stats-info">
 					<Col className="coin-value-statistics-heading">
 						<Title level={3} className="coin-details-heading">
-							{cryptoDetails.name} Other Statistics
+							{data?.data?.coin.name} Other Statistics
 						</Title>
 						<p>An overview showing the stats of all cryptocurrencies</p>
 					</Col>
 					{genericStats.map(({ icon, title, value }) => (
-						<Col className="coin-stats">
+						<Col className="coin-stats" key={title}>
 							<Col className="coin-stats-name">
 								<Text>{icon}</Text>
 								<Text>{title}</Text>
@@ -183,16 +192,16 @@ const CryptoDetails = () => {
 			<Col className="coin-desc-link">
 				<Row className="coin-desc">
 					<Title level={3} className="coin-details-heading">
-						What is {cryptoDetails.name}
-						{HTMLReactParser(cryptoDetails.description)}
+						What is {data?.data?.coin.name}
 					</Title>
+					{HTMLReactParser(data?.data?.coin.description)}
 				</Row>
 				<Col className="coin-links">
 					<Title level={3} className="coin-details-heading">
-						{cryptoDetails.name} Links
+						{data?.data?.coin.name} Links
 					</Title>
-					{cryptoDetails.links.map((link: CryptoLinkType) => (
-						<Row className="coin-link" key={link.name}>
+					{data?.data?.coin.links.map((link: CryptoLinkType) => (
+						<Row className="coin-link" key={link.url}>
 							<Title level={5} className="link-name">
 								{link.type}
 							</Title>

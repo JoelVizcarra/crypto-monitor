@@ -4,15 +4,12 @@ import { Col, Row, Typography } from 'antd';
 
 const { Title } = Typography;
 
-const options: any = {
-	scales: {
-		yAxes: [
-			{
-				ticks: {
-					beginAtZero: true,
-				},
-			},
-		],
+const options = {
+	responsive: true,
+	plugins: {
+		legend: {
+			position: 'top' as const,
+		},
 	},
 };
 
