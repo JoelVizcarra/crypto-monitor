@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Select, Typography, Row, Col, Avatar, Card } from 'antd';
 import moment from 'moment';
 
-import { useGetCryptoNewsQuery } from '../services/cryptoNewsApi';
+import { NewsType, useGetCryptoNewsQuery } from '../services/cryptoNewsApi';
 import { useGetCryptosQuery } from '../services/cryptoApi';
 import Loader from './Loader';
 
@@ -12,7 +12,11 @@ const { Option } = Select;
 const demoImage =
 	'https://www.bing.com/th?id=OVFT.mpzuVZnv8dwIMRfQGPbOPC&pid=News';
 
-const News = ({ simplified }) => {
+interface NewsProps {
+	simplified?: boolean;
+}
+
+const News = ({ simplified = false }: NewsProps) => {
 	const [category, setCategory] = useState('Crytocurrency');
 	const { data: cryptoNews, isFetching } = useGetCryptoNewsQuery({
 		category,
@@ -32,18 +36,20 @@ const News = ({ simplified }) => {
 						placeholder="Select a Crypto"
 						optionFilterProp="children"
 						onChange={(value) => setCategory(value)}
-						filterOption={(input, option) =>
-							!option.children.toLowerCase().indexOf(input.toLocaleLowerCase())
+						filterOption={(input: string, option: any) =>
+							!option?.children
+								?.toLowerCase()
+								?.indexOf(input.toLocaleLowerCase())
 						}
 					>
 						<Option value="Cryptocurrency">Cryptocurrency</Option>
-						{data?.data?.coins.map((coin) => (
+						{data?.data?.coins.map((coin: { name: string }) => (
 							<Option value={coin.name}>{coin.name}</Option>
 						))}
 					</Select>
 				</Col>
 			)}
-			{cryptoNews?.value.map((news, i) => (
+			{cryptoNews?.value.map((news: NewsType, i: number) => (
 				<Col xs={24} sm={12} lg={8} key={i}>
 					<Card className="news-card" hoverable>
 						<a href={news.url} target="_blank" rel="noreferrer">
@@ -58,7 +64,7 @@ const News = ({ simplified }) => {
 								/>
 							</div>
 							<p>
-								{news.description > 100
+								{news.description.length > 100
 									? `${news.description.substring(0, 100)}`
 									: news.description}
 							</p>
@@ -75,9 +81,7 @@ const News = ({ simplified }) => {
 										{news.provider[0]?.name}
 									</Text>
 								</div>
-								<Text>
-									{moment(news.datePublished).startOf('ss').fromNow()}
-								</Text>
+								<Text>{moment(news.datePublished).startOf('s').fromNow()}</Text>
 							</div>
 						</a>
 					</Card>

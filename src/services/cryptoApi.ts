@@ -7,7 +7,7 @@ const cryptoApiHeaders = {
 
 const baseUrl = 'http://localhost:8001/api';
 
-const createRequest = (url) => ({ url, headers: cryptoApiHeaders });
+const createRequest = (url: string) => ({ url, headers: cryptoApiHeaders });
 
 export const cryptoApi = createApi({
 	reducerPath: 'cryptoApi',
@@ -35,3 +35,30 @@ export const {
 	useGetCryptoDetailsQuery,
 	useGetCryptoHistoryQuery,
 } = cryptoApi;
+
+export type CryptoLinkType = {
+	name: string;
+	type: string;
+	url: string;
+};
+
+export type CurrencyType = {
+	uuid: string;
+	rank: string;
+	name: string;
+	iconUrl: string;
+	marketCap: number;
+	price: number;
+	change: number;
+};
+
+export type ExchangeType = {
+	uuid: string;
+	rank: string;
+	iconUrl: string;
+	name: string;
+	volume: number;
+	numberOfMarkets: number;
+	marketShare: number;
+	description: string;
+};

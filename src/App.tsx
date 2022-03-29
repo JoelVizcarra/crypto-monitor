@@ -8,7 +8,7 @@ import {
 	Exchanges,
 	CryptoDetails,
 	Cryptocurrencies,
-	News /* Layout, Footer */,
+	News,
 } from './components';
 
 import './App.css';

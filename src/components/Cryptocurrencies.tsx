@@ -3,18 +3,22 @@ import millify from 'millify';
 import { Link } from 'react-router-dom';
 import { Card, Row, Col, Input } from 'antd';
 
-import { useGetCryptosQuery } from '../services/cryptoApi';
+import { CurrencyType, useGetCryptosQuery } from '../services/cryptoApi';
 import Loader from './Loader';
 
-const Cryptocurrencies = ({ simplified }) => {
+interface CryptocurrenciesProps {
+	simplified?: boolean;
+}
+
+const Cryptocurrencies = ({ simplified = false }: CryptocurrenciesProps) => {
 	const count = simplified ? 10 : 100;
 	const { data: cryptosList, isFetching } = useGetCryptosQuery(count);
 	const [cryptos, setCryptos] = useState([]);
 	const [searchTerm, setSearchTerm] = useState('');
 
 	useEffect(() => {
-		const filteresData = cryptosList?.data?.coins.filter((coin) =>
-			coin.name.toLowerCase().includes(searchTerm)
+		const filteresData = cryptosList?.data?.coins.filter(
+			(coin: { name: string }) => coin.name.toLowerCase().includes(searchTerm)
 		);
 		setCryptos(filteresData);
 	}, [cryptosList, searchTerm]);
@@ -32,7 +36,7 @@ const Cryptocurrencies = ({ simplified }) => {
 				</div>
 			)}
 			<Row gutter={[32, 32]} className="crypto-card-container">
-				{cryptos?.map((currency) => (
+				{cryptos?.map((currency: CurrencyType) => (
 					<Col
 						xs={24}
 						sm={12}

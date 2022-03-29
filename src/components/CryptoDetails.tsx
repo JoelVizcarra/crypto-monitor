@@ -16,6 +16,7 @@ import {
 } from '@ant-design/icons';
 
 import {
+	CryptoLinkType,
 	useGetCryptoDetailsQuery,
 	useGetCryptoHistoryQuery,
 } from '../services/cryptoApi';
@@ -25,8 +26,12 @@ import Loader from './Loader';
 const { Text, Title } = Typography;
 const { Option } = Select;
 
+type CryptoDetailsParamsType = {
+	coinUuid: string;
+};
+
 const CryptoDetails = () => {
-	const { coinUuid } = useParams();
+	const { coinUuid } = useParams<CryptoDetailsParamsType>();
 	const [timePeriod, setTimePeriod] = useState('7d');
 	const { data, isFetching } = useGetCryptoDetailsQuery(coinUuid);
 	const { data: coinHistory } = useGetCryptoHistoryQuery({
@@ -135,7 +140,7 @@ const CryptoDetails = () => {
 				))}
 			</Select>
 			<LineChart
-				coinHistory={coinHistory}
+				coinHistory={coinHistory?.data}
 				currentPrice={millify(cryptoDetails.price)}
 				coinName={cryptoDetails.name}
 			/>
@@ -186,7 +191,7 @@ const CryptoDetails = () => {
 					<Title level={3} className="coin-details-heading">
 						{cryptoDetails.name} Links
 					</Title>
-					{cryptoDetails.links.map((link) => (
+					{cryptoDetails.links.map((link: CryptoLinkType) => (
 						<Row className="coin-link" key={link.name}>
 							<Title level={5} className="link-name">
 								{link.type}

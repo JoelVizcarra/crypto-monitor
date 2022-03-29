@@ -4,7 +4,7 @@ import { Col, Row, Typography } from 'antd';
 
 const { Title } = Typography;
 
-const options = {
+const options: any = {
 	scales: {
 		yAxes: [
 			{
@@ -16,24 +16,38 @@ const options = {
 	},
 };
 
-const LineChart = ({ coinHistory, currentPrice, coinName }) => {
-	const [coinPrice, setCoinPrice] = useState([]);
-	const [coinTimestamp, setCoinTimestamp] = useState([]);
+type HistoryType = {
+	price: string;
+	timestamp: number;
+};
+
+type CoinHistoryType = {
+	change: string;
+	history: Array<HistoryType>;
+};
+
+interface LineChartProps {
+	coinHistory: CoinHistoryType;
+	currentPrice: string;
+	coinName: string;
+}
+
+const LineChart = ({ coinHistory, currentPrice, coinName }: LineChartProps) => {
+	const [coinPrice, setCoinPrice] = useState<any>([]);
+	const [coinTimestamp, setCoinTimestamp] = useState<any>(['']);
 
 	useEffect(() => {
 		const newCoinPrice = [];
 		const newCoinTimestamp = [];
-		for (let i = 0; i < coinHistory?.data?.history?.length; i += 1) {
-			newCoinPrice.push(coinHistory?.data?.history[i].price);
+		for (let i = 0; i < coinHistory.history.length; i += 1) {
+			newCoinPrice.push(coinHistory.history[i].price);
 			newCoinTimestamp.push(
-				new Date(
-					coinHistory?.data?.history[i].timestamp * 1000
-				).toLocaleDateString()
+				new Date(coinHistory.history[i].timestamp * 1000).toLocaleDateString()
 			);
 		}
 		setCoinPrice(newCoinPrice);
 		setCoinTimestamp(newCoinTimestamp);
-	}, [coinHistory?.data?.history]);
+	}, [coinHistory.history]);
 
 	const data = useMemo(
 		() => ({
@@ -51,17 +65,15 @@ const LineChart = ({ coinHistory, currentPrice, coinName }) => {
 		[coinTimestamp, coinPrice]
 	);
 
-	console.log(coinTimestamp);
-
 	return (
 		<>
 			<Row className="chart-header">
-				<Title lecel={2} className="chart-title">
+				<Title level={2} className="chart-title">
 					{coinName} Price Chart
 				</Title>
 				<Col className="price-container">
 					<Title level={5} className="price-change">
-						{coinHistory?.data?.change}%
+						{coinHistory.change}%
 					</Title>
 					<Title level={5} className="current-price">
 						Current{coinName} Price: $ {currentPrice}%
