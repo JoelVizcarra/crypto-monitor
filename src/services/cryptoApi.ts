@@ -1,11 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const cryptoApiHeaders = {
-	'x-access-token':
-		'coinrankingcadf9d4cdb7f986649e6629f23158291639548d48bead2ac',
+	'x-access-token': process.env.REACT_APP_CRYPTO_API_X_ACCESS_TOKEN,
 };
 
-const baseUrl = 'http://localhost:8001/api';
+const baseUrl = process.env.REACT_APP_CRYPTO_API_URL;
 
 const createRequest = (url: string) => ({ url, headers: cryptoApiHeaders });
 

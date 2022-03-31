@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import HTMLReactParser from 'html-react-parser';
 import { useParams } from 'react-router-dom';
 import millify from 'millify';
@@ -26,7 +26,7 @@ import Loader from './Loader';
 const { Text, Title } = Typography;
 const { Option } = Select;
 
-const time = ['3h', '24h', '7d', '30d', '1y', '3m', '3y', '5y'];
+const time = ['3h', '24h', '7d', '30d', '3m', '1y', '3y', '5y'];
 
 type CryptoDetailsParamsType = {
 	coinUuid: string;
